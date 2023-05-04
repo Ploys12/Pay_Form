@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import OperatorList from './components/OperatorList';
+import PaymentForm from './components/PaymentForm';
+import api from './api';
+
+const operators = ['МТС', 'Билайн', 'Мегафон'];
 
 function App() {
+  const [operator, setOperator] = useState(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  const handleOperatorSelect = operator => {
+    setOperator(operator);
+    setPaymentSuccess(false);
+  };
+
+  const handlePaymentSubmit = async response => {
+    setPaymentSuccess(response.success);
+    setOperator(null);
+  };
+
+  const handleBackToOperatorsClick = () => {
+    setOperator(null);
+    setPaymentSuccess(false);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {!operator && (
+        <OperatorList operators={operators} onOperatorSelect={handleOperatorSelect} />
+      )}
+      {operator && (
+        <PaymentForm operator={operator} onPaymentSubmit={handlePaymentSubmit} />
+      )}
+      {paymentSuccess && (
+        <div>
+          Payment successful!{' '}
+          <button onClick={handleBackToOperatorsClick}>Вернуться</button>
+        </div>
+      )}
     </div>
   );
 }
+
 
 export default App;
